@@ -3,6 +3,8 @@
 #define EPS 0.01
 #define DIM 2
 #define TAM 10
+#define TOL 0.001
+#define C 10000 /* Maximun value apsumed for the alphas */
 
 float* target;    /*desire output vector*/
 float** point;    /*trainig point matrix*/
@@ -10,12 +12,24 @@ float* alphas;    /* Lagrange multipliers */
 float* E;    /*actual error vector*/
 float* w;    /* weigth vector solution */
 float b;    /* bias */
-float C;    
 
 float
 max(float num1, float num2)
 {
     return num1 > num2 ? num1 : num2;
+}
+
+int
+maxVectorIndex(float* vector)
+{
+    int i;
+    int maxValueIndex = 0;
+    for (i = 1; i < TAM; i++) {
+        if (vector[i] > vector[maxValueIndex])
+            maxValueIndex = i;
+    }
+
+    return maxValueIndex;
 }
 
 float
@@ -24,10 +38,61 @@ min(float num1, float num2)
     return num1 < num2 ? num1 : num2;
 }
 
+int
+minVectorIndex(float* vector)
+{
+    int i;
+    int minValueIndex = 0;
+    for (i = 1; i < TAM; i++) {
+        if (vector[i] < vector[minValueIndex])
+            minValueIndex = i;
+    }
+
+    return minValueIndex;
+}
+
 float
 absolute(float x)
 {
     return x >= 0 ? x : -x;
+}
+
+float* 
+nonvalueAlphasPos(float value)
+{
+    int i, j;
+    float* nonvalueVectorPos = malloc(sizeof(float) * TAM);
+
+    for (i = 0, j = 0; i < TAM; i++) {
+        if (alphas[i] != value) {
+            nonvalueVectorPos[j] = i;
+            j++;
+        }
+    }
+
+    for (j++; j < TAM; j++) {
+        nonvalueVectorPos[j] = -1;
+    }
+
+    return nonvalueVectorPos;
+
+}
+
+int
+nonvalueAlphasCount(float value)
+{
+    int i;
+    float* nonvalueVectorPos;
+
+    nonvalueVectorPos = nonvalueAlphasPos(value);
+
+    for (i = 0; i < TAM; i++) {
+        if (nonvalueVectorPos[i] == -1) {
+            break;
+        }
+    }
+
+    return i;
 }
 
 float
@@ -146,6 +211,52 @@ takeStep(int i1, int i2)
 
 int 
 examineExample(int i2)
+{
+    float y2, alpha2, E2, r2;
+    int i1, i;
+
+    y2 = target[i2];
+    alpha2 = alphas[i2];
+    E2 = E[i2];
+    r2 = y2 * E2;
+
+    if ((r2 < -TOL && alpha2 < C) || (r2 > TOL && alpha2 > 0)) {
+        /* Pick i1 */
+        if (nonvalueAlphasCount(0) & nonvalueAlphasCount(C) > 1) {
+            /* x1 must have the biggest error over x2 */
+            if (E2 < 0) {
+                i1 = maxVectorIndex(E);
+            } else {
+                i1 = minVectorIndex(E);
+            }
+
+            if (takeStep(i1, i2)) {
+                return 1;
+            }
+        }
+    }
+
+    /* loop over all nonzeros and non-C alphas, start random */
+    for (i = 0; ; i++) {
+        // randomizar a escolha
+        if (takeStep(i1, i2)) {
+            return 1;
+        }
+    }
+
+    /* Loop over all possible i1, start random */
+    for (i = 0; ; i++) {
+        //arndomizar a escolha
+        if (takeStep(i1, i2)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void 
+smo()
 {
 
 }
