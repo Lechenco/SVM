@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #define EPS 0.01
 #define DIM 2
 #define TAM 10
@@ -13,109 +14,119 @@ float* E;    /*actual error vector*/
 float* w;    /* weigth vector solution */
 float b;    /* bias */
 
-float
-max(float num1, float num2)
-{
-    return num1 > num2 ? num1 : num2;
-}
+void smo();
+int examineExample(int i2);
+int takeStep(int i1, int i2);
+int nonzerosNonCAlphasRandomLoop(int i2);
+int allAlphasRandomLoop(int i2);
+float* nonzeroNonCAlphasPos();
+int nonvalueAlphasCount(float value);
+int alphasVectorCount(float* alphas);
+float* nonvalueAlphasPos(float value);
+int* randomPermutation(int n);
+float linearKernel(int pos1, int pos2);
+void updateErrorCache();
+int maxVectorIndex(float* vector);
+int minVectorIndex(float* vector);
+float absolute(float x);
+float max(float num1, float num2);
+float min(float num1, float num2);
 
 int
-maxVectorIndex(float* vector)
+main(int argc, char *argv[])
 {
     int i;
-    int maxValueIndex = 0;
-    for (i = 1; i < TAM; i++) {
-        if (vector[i] > vector[maxValueIndex])
-            maxValueIndex = i;
-    }
+    srand(time(0));
+    int* per = randomPermutation(10);
 
-    return maxValueIndex;
+    for(i = 0; i < 10; i++)
+        printf("%d ", per[i]);
 }
 
-float
-min(float num1, float num2)
+void 
+smo()
 {
-    return num1 < num2 ? num1 : num2;
-}
+    int i, n;
+    int numChanged = 0,
+        examineAll = 1;
+    float* nonzeroNonCAlphasVector;
 
-int
-minVectorIndex(float* vector)
-{
-    int i;
-    int minValueIndex = 0;
-    for (i = 1; i < TAM; i++) {
-        if (vector[i] < vector[minValueIndex])
-            minValueIndex = i;
-    }
-
-    return minValueIndex;
-}
-
-float
-absolute(float x)
-{
-    return x >= 0 ? x : -x;
-}
-
-float* 
-nonvalueAlphasPos(float value)
-{
-    int i, j;
-    float* nonvalueVectorPos = malloc(sizeof(float) * TAM);
-
-    for (i = 0, j = 0; i < TAM; i++) {
-        if (alphas[i] != value) {
-            nonvalueVectorPos[j] = i;
-            j++;
-        }
-    }
-
-    for (j++; j < TAM; j++) {
-        nonvalueVectorPos[j] = -1;
-    }
-
-    return nonvalueVectorPos;
-
-}
-
-int
-nonvalueAlphasCount(float value)
-{
-    int i;
-    float* nonvalueVectorPos;
-
-    nonvalueVectorPos = nonvalueAlphasPos(value);
-
+    /* create zero alphas vecto */
+    alphas = malloc(sizeof(float) * TAM);
     for (i = 0; i < TAM; i++) {
-        if (nonvalueVectorPos[i] == -1) {
-            break;
-        }
+        alphas[i] = 0;
     }
 
-    return i;
-}
-
-float
-linearKernel(int pos1, int pos2)
-{
-    int i;
-    float res = 0.0;
+    /* create zero w vector */
+    w = malloc(sizeof(float) * DIM);
     for (i = 0; i < DIM; i++) {
-        res += point[pos1][i] * point[pos2][i];
+        w[i] = 0;
     }
 
-    return res;
-}
+    while (numChanged > 0 || examineAll) {
+        numChanged = 0;
+        if (examineAll) {
+            for (i = 0; i < TAM; i++) {
+                numChanged += examineExample(i);
+            }
+        } else {
+            // encontrar nonzero non-C alphas
+            nonzeroNonCAlphasVector = nonzeroNonCAlphasPos();
+            n = alphasVectorCount(nonzeroNonCAlphasVector);
 
-void
-updateErrorCache()
-{
-    int i, j;
-    for (i = 0; i < TAM; i++) {
-        for (j = 0; j < DIM; j++) {
-            E[i] = w[j]*point[i][j] - b - target[i];
+            for (i = 0; i < n; i++) {
+                numChanged += examineExample(nonzeroNonCAlphasVector[i]);
+            }
+        }
+
+        /* validation to continue the loop */
+        if (examineAll) {
+            examineAll = 0;
+        } else if (!numChanged) {
+            examineAll = 1;
         }
     }
+    
+}
+
+int 
+examineExample(int i2)
+{
+    float y2, alpha2, E2, r2;
+    int i1, i;
+
+    y2 = target[i2];
+    alpha2 = alphas[i2];
+    E2 = E[i2];
+    r2 = y2 * E2;
+
+    if ((r2 < -TOL && alpha2 < C) || (r2 > TOL && alpha2 > 0)) {
+        /* Pick i1 */
+        if (nonvalueAlphasCount(0) & nonvalueAlphasCount(C) > 1) {
+            /* x1 must have the biggest error over x2 */
+            if (E2 < 0) {
+                i1 = maxVectorIndex(E);
+            } else {
+                i1 = minVectorIndex(E);
+            }
+
+            if (takeStep(i1, i2)) {
+                return 1;
+            }
+        }
+    }
+
+    /* loop over all nonzeros and non-C alphas, start random */
+    if (nonzerosNonCAlphasRandomLoop(i2)) {
+        return 1;
+    }
+
+    /* Loop over all possible i1, start random */
+    if (allAlphasRandomLoop(i2)) {
+        return 1;
+    }
+
+    return 0;
 }
 
 int
@@ -209,60 +220,202 @@ takeStep(int i1, int i2)
 
 }
 
-int 
-examineExample(int i2)
+int
+nonzerosNonCAlphasRandomLoop(int i2)
 {
-    float y2, alpha2, E2, r2;
-    int i1, i;
+    int i, n;
+    int* randomAlphas;
+    float* nonzerosNonCAlphasVector;
 
-    y2 = target[i2];
-    alpha2 = alphas[i2];
-    E2 = E[i2];
-    r2 = y2 * E2;
+    nonzerosNonCAlphasVector = nonzeroNonCAlphasPos();
+    n = alphasVectorCount(nonzerosNonCAlphasVector);
 
-    if ((r2 < -TOL && alpha2 < C) || (r2 > TOL && alpha2 > 0)) {
-        /* Pick i1 */
-        if (nonvalueAlphasCount(0) & nonvalueAlphasCount(C) > 1) {
-            /* x1 must have the biggest error over x2 */
-            if (E2 < 0) {
-                i1 = maxVectorIndex(E);
-            } else {
-                i1 = minVectorIndex(E);
-            }
+    randomAlphas = randomPermutation(n);
 
-            if (takeStep(i1, i2)) {
-                return 1;
-            }
-        }
-    }
-
-    /* loop over all nonzeros and non-C alphas, start random */
     for (i = 0; ; i++) {
-        // randomizar a escolha
-        if (takeStep(i1, i2)) {
+        if (takeStep(randomAlphas[i], i2)) {
             return 1;
         }
     }
-
-    /* Loop over all possible i1, start random */
-    for (i = 0; ; i++) {
-        //arndomizar a escolha
-        if (takeStep(i1, i2)) {
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-void 
-smo()
-{
-
 }
 
 int
-main(int argc, char *argv[])
+allAlphasRandomLoop(int i2)
 {
-    printf("Hello world");
+    int i;
+    int* randomAlphas = randomPermutation(TAM);
+
+    for (i = 0; ; i++) {
+        if (takeStep(randomAlphas[i], i2)) {
+            return 1;
+        }
+    }
+}
+
+float*
+nonzeroNonCAlphasPos()
+{
+    int i, j;
+    float* nonzeroVectorPos, 
+         * nonCVectorPos,
+         * nonvalueVectorPos;
+
+    nonzeroVectorPos = nonvalueAlphasPos(0);
+    nonCVectorPos = nonvalueAlphasPos(C);
+    nonvalueVectorPos = malloc(sizeof(float) * TAM);
+
+    for (i = 0, j = 0; j < TAM; j++) {
+        if (nonzeroVectorPos[j] != -1) {
+            nonvalueVectorPos[i] = nonzeroVectorPos[j];
+            i++;
+        }
+        if (nonCVectorPos[j] != -1) {
+            nonvalueVectorPos[i] = nonCVectorPos[j];
+            i++;
+        }
+    }
+
+    for (; i < TAM; i++) {
+        nonvalueVectorPos[i] = -1;
+    }
+
+    return nonvalueVectorPos;
+}
+
+int
+nonvalueAlphasCount(float value)
+{
+    int i;
+    float* nonvalueVector = nonvalueAlphasPos(value);
+
+    for (i = 0; i < TAM; i++) {
+        if (nonvalueVector[i] == -1) {
+            break;
+        }
+    }
+
+    return i;
+}
+
+int
+alphasVectorCount(float* alphas) 
+{
+    int i;
+
+    for (i = 0; i < TAM; i++) {
+        if (alphas[i] == -1) {
+            break;
+        }
+    }
+
+    return i;
+}
+
+float* 
+nonvalueAlphasPos(float value)
+{
+    int i, j;
+    float* nonvalueVectorPos = malloc(sizeof(float) * TAM);
+
+    for (i = 0, j = 0; i < TAM; i++) {
+        if (alphas[i] != value) {
+            nonvalueVectorPos[j] = i;
+            j++;
+        }
+    }
+
+    for (j++; j < TAM; j++) {
+        nonvalueVectorPos[j] = -1;
+    }
+
+    return nonvalueVectorPos;
+}
+
+int*
+randomPermutation(int n)
+{
+    int i, j, temp;
+    int* permutation = malloc(sizeof(int) * n);
+
+    for (i = 0; i < n; i++) {
+        permutation[i] = i;
+    }
+    // shuffle
+    for(i = 0; i < n; i++) {
+        j = rand() % (i +1);
+
+        temp = permutation[i];
+        permutation[i] = permutation[j];
+        permutation[j] = temp;
+    }
+
+    return permutation;
+
+}
+
+float
+linearKernel(int pos1, int pos2)
+{
+    int i;
+    float res = 0.0;
+    for (i = 0; i < DIM; i++) {
+        res += point[pos1][i] * point[pos2][i];
+    }
+
+    return res;
+}
+
+void
+updateErrorCache()
+{
+    int i, j;
+    for (i = 0; i < TAM; i++) {
+        for (j = 0; j < DIM; j++) {
+            E[i] = w[j]*point[i][j] - b - target[i];
+        }
+    }
+}
+
+int
+maxVectorIndex(float* vector)
+{
+    int i;
+    int maxValueIndex = 0;
+    for (i = 1; i < TAM; i++) {
+        if (vector[i] > vector[maxValueIndex])
+            maxValueIndex = i;
+    }
+
+    return maxValueIndex;
+}
+
+int
+minVectorIndex(float* vector)
+{
+    int i;
+    int minValueIndex = 0;
+    for (i = 1; i < TAM; i++) {
+        if (vector[i] < vector[minValueIndex])
+            minValueIndex = i;
+    }
+
+    return minValueIndex;
+}
+
+float
+absolute(float x)
+{
+    return x >= 0 ? x : -x;
+}
+
+float
+max(float num1, float num2)
+{
+    return num1 > num2 ? num1 : num2;
+}
+
+float
+min(float num1, float num2)
+{
+    return num1 < num2 ? num1 : num2;
 }
