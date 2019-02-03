@@ -36,11 +36,14 @@ int
 main(int argc, char *argv[])
 {
     int i;
-    srand(time(0));
-    int* per = randomPermutation(10);
 
-    for(i = 0; i < 10; i++)
-        printf("%d ", per[i]);
+    target = malloc(sizeof(float) * TAM);
+    point = malloc(sizeof(float*) * TAM);
+    for (i = 0; i < TAM; i++) {
+        point[i] = malloc(sizeof(float) * DIM);
+    }
+
+    smo(); // Segmetation fault
 }
 
 void 
@@ -50,6 +53,8 @@ smo()
     int numChanged = 0,
         examineAll = 1;
     float* nonzeroNonCAlphasVector;
+
+    b = 0;
 
     /* create zero alphas vecto */
     alphas = malloc(sizeof(float) * TAM);
@@ -61,6 +66,12 @@ smo()
     w = malloc(sizeof(float) * DIM);
     for (i = 0; i < DIM; i++) {
         w[i] = 0;
+    }
+
+    /* Error Cache start */
+    E = malloc(sizeof(float));
+    for (i = 0; i < TAM; i++) {
+        E[i] = -target[i];
     }
 
     while (numChanged > 0 || examineAll) {
@@ -130,10 +141,9 @@ examineExample(int i2)
 }
 
 int
-takeStep(int i1, int i2)
+takeStep(int i1, int i2) //Break function
 {
-    float alpha1, y1, E1,
-        alpha2, y2, E2;
+    float alpha1, y1, E1, alpha2, y2, E2;
     float s, L, H, k11, k12, k22, a1,
         a2, f1, f2, L1, H1, Lobj, Hobj, 
         eta, b1, b2, bnew;
