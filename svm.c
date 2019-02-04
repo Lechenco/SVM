@@ -3,12 +3,12 @@
 #include <time.h>
 #define EPS 0.01
 #define DIM 2
-#define TAM 10
-#define TOL 0.001
+#define TAM 8
+#define TOL 0.001 /* Error tolerance */
 #define C 10000 /* Maximun value apsumed for the alphas */
 
-float* target;    /*desire output vector*/
-float** point;    /*trainig point matrix*/
+float target[] = {1, 1, -1, -1, 1, -1, 1, 1};    /*desire output vector*/
+float point[][DIM] = {{1,1}, {2,1.5}, {1,3}, {2.1,3.5}, {1.5,0}, {1.3,2}, {1.5,1.2}, {3,2.8}};    /*trainig point matrix*/
 float* alphas;    /* Lagrange multipliers */
 float* E;    /*actual error vector*/
 float* w;    /* weigth vector solution */
@@ -17,13 +17,16 @@ float b;    /* bias */
 void smo();
 int examineExample(int i2);
 int takeStep(int i1, int i2);
+void initializeVariables();
+void desalocatePointers();
 int nonzerosNonCAlphasRandomLoop(int i2);
 int allAlphasRandomLoop(int i2);
-float* nonzeroNonCAlphasPos();
 int nonvalueAlphasCount(float value);
 int alphasVectorCount(float* alphas);
+float* nonzeroNonCAlphasPos();
 float* nonvalueAlphasPos(float value);
 int* randomPermutation(int n);
+int classifyNewPoint(float* point);
 float linearKernel(int pos1, int pos2);
 void updateErrorCache();
 int maxVectorIndex(float* vector);
@@ -37,13 +40,14 @@ main(int argc, char *argv[])
 {
     int i;
 
-    target = malloc(sizeof(float) * TAM);
-    point = malloc(sizeof(float*) * TAM);
-    for (i = 0; i < TAM; i++) {
-        point[i] = malloc(sizeof(float) * DIM);
-    }
+    smo(); 
 
-    smo(); // Segmetation fault
+    printf("Success!!\n");
+    printf("w: %.5f %.5f\n", w[0], w[1]);
+    printf("b: %.5f\n", b);
+
+    desalocatePointers();
+    return 0;
 }
 
 void 
@@ -54,25 +58,7 @@ smo()
         examineAll = 1;
     float* nonzeroNonCAlphasVector;
 
-    b = 0;
-
-    /* create zero alphas vecto */
-    alphas = malloc(sizeof(float) * TAM);
-    for (i = 0; i < TAM; i++) {
-        alphas[i] = 0;
-    }
-
-    /* create zero w vector */
-    w = malloc(sizeof(float) * DIM);
-    for (i = 0; i < DIM; i++) {
-        w[i] = 0;
-    }
-
-    /* Error Cache start */
-    E = malloc(sizeof(float));
-    for (i = 0; i < TAM; i++) {
-        E[i] = -target[i];
-    }
+    initializeVariables();
 
     while (numChanged > 0 || examineAll) {
         numChanged = 0;
@@ -81,13 +67,13 @@ smo()
                 numChanged += examineExample(i);
             }
         } else {
-            // encontrar nonzero non-C alphas
             nonzeroNonCAlphasVector = nonzeroNonCAlphasPos();
             n = alphasVectorCount(nonzeroNonCAlphasVector);
 
             for (i = 0; i < n; i++) {
                 numChanged += examineExample(nonzeroNonCAlphasVector[i]);
             }
+            free(nonzeroNonCAlphasVector);
         }
 
         /* validation to continue the loop */
@@ -121,8 +107,9 @@ examineExample(int i2)
                 i1 = minVectorIndex(E);
             }
 
+
             if (takeStep(i1, i2)) {
-                return 1;
+                 return 1;
             }
         }
     }
@@ -227,7 +214,40 @@ takeStep(int i1, int i2) //Break function
     updateErrorCache();
 
     return 1;
+}
 
+void
+initializeVariables()
+{
+    int i;
+     b = 0;
+
+    /* create zero alphas vecto */
+    alphas = malloc(sizeof(float) * TAM);
+    for (i = 0; i < TAM; i++) {
+        alphas[i] = 0;
+    }
+
+    /* create zero w vector */
+    w = malloc(sizeof(float) * DIM);
+    for (i = 0; i < DIM; i++) {
+        w[i] = 0;
+    }
+
+    /* Error Cache start */
+    E = malloc(sizeof(float) *TAM);
+    for (i = 0; i < TAM; i++) {
+        E[i] = -target[i];
+    }
+}
+
+void
+desalocatePointers()
+{
+    int i;
+    free(E);
+    free(w);
+    free(alphas);
 }
 
 int
@@ -242,11 +262,17 @@ nonzerosNonCAlphasRandomLoop(int i2)
 
     randomAlphas = randomPermutation(n);
 
-    for (i = 0; ; i++) {
+    for (i = 0; i < n; i++) {
         if (takeStep(randomAlphas[i], i2)) {
+            free(randomAlphas);
+            free(nonzerosNonCAlphasVector);
             return 1;
         }
     }
+
+    free(randomAlphas);
+    free(nonzerosNonCAlphasVector);
+    return 0;
 }
 
 int
@@ -255,41 +281,15 @@ allAlphasRandomLoop(int i2)
     int i;
     int* randomAlphas = randomPermutation(TAM);
 
-    for (i = 0; ; i++) {
+    for (i = 0; i < TAM; i++) {
         if (takeStep(randomAlphas[i], i2)) {
+            free(randomAlphas);
             return 1;
         }
     }
-}
 
-float*
-nonzeroNonCAlphasPos()
-{
-    int i, j;
-    float* nonzeroVectorPos, 
-         * nonCVectorPos,
-         * nonvalueVectorPos;
-
-    nonzeroVectorPos = nonvalueAlphasPos(0);
-    nonCVectorPos = nonvalueAlphasPos(C);
-    nonvalueVectorPos = malloc(sizeof(float) * TAM);
-
-    for (i = 0, j = 0; j < TAM; j++) {
-        if (nonzeroVectorPos[j] != -1) {
-            nonvalueVectorPos[i] = nonzeroVectorPos[j];
-            i++;
-        }
-        if (nonCVectorPos[j] != -1) {
-            nonvalueVectorPos[i] = nonCVectorPos[j];
-            i++;
-        }
-    }
-
-    for (; i < TAM; i++) {
-        nonvalueVectorPos[i] = -1;
-    }
-
-    return nonvalueVectorPos;
+    free(randomAlphas);
+    return 0;
 }
 
 int
@@ -304,6 +304,7 @@ nonvalueAlphasCount(float value)
         }
     }
 
+    free(nonvalueVector);
     return i;
 }
 
@@ -319,6 +320,28 @@ alphasVectorCount(float* alphas)
     }
 
     return i;
+}
+
+float*
+nonzeroNonCAlphasPos()
+{
+    int i, j;
+    float* nonvalueVectorPos;
+
+    nonvalueVectorPos = malloc(sizeof(float) * TAM);
+
+    for (i = 0, j = 0; i < TAM; i++) {
+        if (alphas[i] != 0 && alphas[i] != C ) {
+            nonvalueVectorPos[j] = alphas[i];
+            j++;
+        }
+    }
+
+    for (; j < TAM; j++) {
+        nonvalueVectorPos[j] = -1;
+    }
+
+    return nonvalueVectorPos;
 }
 
 float* 
@@ -363,6 +386,19 @@ randomPermutation(int n)
 
 }
 
+int
+classifyNewPoint(float* point)
+{
+    int i;
+    float res = -b;
+
+    for (i = 0; i < DIM; i++) {
+        res += w[i] * point[i];
+    }
+
+    return res >=0 ? 1 : -1;
+}
+
 float
 linearKernel(int pos1, int pos2)
 {
@@ -380,8 +416,9 @@ updateErrorCache()
 {
     int i, j;
     for (i = 0; i < TAM; i++) {
+        E[i] = - b - target[i];
         for (j = 0; j < DIM; j++) {
-            E[i] = w[j]*point[i][j] - b - target[i];
+            E[i] += w[j]*point[i][j];
         }
     }
 }

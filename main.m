@@ -1,5 +1,7 @@
-
-%[w,b] = smo(iris_data(:,1:2), iris_data(:,3))
+iris_data = importdata('data.txt');
+X = iris_data(:, 1:2);
+Y = iris_data(:, 3);
+[w,b] = smo(iris_data(:,1:2), iris_data(:,3))
 
 % Importa os dados
 iris_data = importdata('iris.txt');
