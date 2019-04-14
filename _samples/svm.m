@@ -1,4 +1,3 @@
-%% Only on MATLAB
 
 rng(1); % For reproducibility
 r = sqrt(rand(100,1)); % Radius
@@ -39,6 +38,20 @@ hold on
 ezpolar(@(x)1);
 h(3) = plot(data3(cl.IsSupportVector,1),data3(cl.IsSupportVector,2),'ko');
 contour(x1Grid,x2Grid,reshape(scores(:,2),size(x1Grid)),[0 0],'k');
+legend(h,{'-1','+1','Support Vectors'});
+axis equal
+hold off
+
+%
+cl2 = fitcsvm(data3,theclass,'KernelFunction','rbf');
+[~,scores2] = predict(cl2,xGrid);
+
+figure;
+h(1:2) = gscatter(data3(:,1),data3(:,2),theclass,'rb','.');
+hold on
+ezpolar(@(x)1);
+h(3) = plot(data3(cl2.IsSupportVector,1),data3(cl2.IsSupportVector,2),'ko');
+contour(x1Grid,x2Grid,reshape(scores2(:,2),size(x1Grid)),[0 0],'k');
 legend(h,{'-1','+1','Support Vectors'});
 axis equal
 hold off
