@@ -1,0 +1,115 @@
+Loading 16265...
+Number anomalies: 100928
+F
+N
+S
+V
+|
+~
+Loading 16272...
+Number anomalies: 97145
+N
+S
+|
+~
+Loading 16273...
+Number anomalies: 90092
+N
+S
+|
+~
+Loading 16420...
+Number anomalies: 102430
+N
+S
+V
+|
+~
+Loading 16483...
+Number anomalies: 104557
+N
+S
+|
+~
+Loading 16539...
+Number anomalies: 108657
+N
+S
+|
+~
+Loading 16773...
+Number anomalies: 112870
+N
+S
+|
+~
+Loading 16786...
+Number anomalies: 101729
+F
+N
+S
+V
+|
+~
+Loading 16795...
+Number anomalies: 87678
+N
+|
+~
+Loading 17052...
+Number anomalies: 88000
+N
+S
+|
+~
+Loading 17453...
+Number anomalies: 101170
+N
+S
+|
+~
+Loading 18177...
+Number anomalies: 117001
+N
+S
+|
+~
+Loading 18184...
+Number anomalies: 102672
+N
+|
+~
+Loading 19088...
+Number anomalies: 117876
+N
+S
+V
+|
+~
+Loading 19090...
+Number anomalies: 81944
+J
+N
+S
+|
+~
+Loading 19093...
+Number anomalies: 83664
+N
+S
+V
+|
+~
+Loading 19140...
+Number anomalies: 96992
+N
+|
+~
+Loading 19830...
+Number anomalies: 111260
+N
+S
+|
+~
+Number of windows finded: 1780745
+>> 
