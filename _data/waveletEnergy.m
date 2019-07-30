@@ -3,23 +3,26 @@ clear all
 folder = "_windowSignals/";
 files = dir(folder);
 nLevels = 4;
-svmData = [];
+svmData = zeros(length(files), 2^nLevels+1);
 
-for f = 1:size(files)
+tic
+parfor f = 1:length(files)
    if files(f).isdir
         continue
    end
    
-   load(folder + files(f).name)
+   file = load(folder + files(f).name)
    disp("Opening file " + files(f).name + "...")
    
-   wtree = wpdec(signalWindow, nLevels, 'db3');
+   wtree = wpdec(file.signalWindow, nLevels, 'db3');
    E = wenergy(wtree);
    
    % classify: 1 Normal, -1 Anormal
-   haveAnomalie = 1 - 2 * (annType ~= 'N');
+   haveAnomalie = 1 - 2 * (file.annType ~= 'N');
    
-   svmData = [svmData; E haveAnomalie];
+   svmData(f, :) = [E haveAnomalie];
 end
+toc
 
-csvwrite("waveletData.csv", svmData);
+ svmData(1:2,:)= [];
+ csvwrite("waveletData.csv", svmData);

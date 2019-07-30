@@ -1,5 +1,5 @@
-## Author: Lechenco <lechenco@lechenco-Aspire-5>
-## Created: 2018-12-24
+%% Author: Lechenco <lechenco@lechenco-Aspire-5>
+%% Created: 2018-12-24
 
 function [ret] = takeStep (i1, i2)
   global X;
@@ -13,7 +13,7 @@ function [ret] = takeStep (i1, i2)
   if i1 == i2
     ret = false;
     return
-  endif
+  end
   eps = 0.001; % taxa de erro
   alpha1 = alphas(i1);
   y1 = Y(i1);
@@ -30,12 +30,12 @@ function [ret] = takeStep (i1, i2)
   else
     L = max(0, alpha2 - alpha1);
     H = min(C, C + alpha2 - alpha1);
-  endif 
+  end
   
   if L == H
     ret = false;
     return
-  endif
+  end
   
   % Kernel Linear
   k11 = X(i1,:) * X(i1,:)';
@@ -64,14 +64,14 @@ function [ret] = takeStep (i1, i2)
       a2 = H;
     else
       a2 = alpha2;
-    endif
-  endif
+    end
+  end
   
   % checando a2
   if abs(a2 - alpha2) < eps * (a2 + alpha2 + eps) 
     ret = false;
     return
-  endif
+  end
   
   % caclular novo alpha1
   a1 = alpha1 + s * (alpha2 - a2);
@@ -80,13 +80,13 @@ function [ret] = takeStep (i1, i2)
   b1 = E1 + y1 * (a1 - alpha1) * k11 + y2 * (a2 - alpha2) * k12 + b;
   b2 = E2 + y1 * (a1 - alpha1) * k12 + y2 * (a2 - alpha2) * k22 + b;
   
-  if 0 < a1 && a1 < C
+  if 0 < a1 & a1 < C
     b_new = b1;
-  elseif 0 < a2 && a2 < C
+  elseif 0 < a2 & a2 < C
     b_new = b2;
   else
     b_new = (b1 + b2) / 2;
-  endif
+  end
   
   % update weigth vector w, if SVM is linear
   w = w + y1 * (a1 - alpha1) * X(i1,:) + y2 * (a2 - alpha2) * X(i2,:);
@@ -101,4 +101,4 @@ function [ret] = takeStep (i1, i2)
   end
   b = b_new;
   ret = true;
-endfunction
+  end

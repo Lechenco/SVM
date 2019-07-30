@@ -1,55 +1,46 @@
-iris_data = importdata('data.txt');
-X = iris_data(:, 1:2);
-Y = iris_data(:, 3);
-[w,b] = smo(iris_data(:,1:2), iris_data(:,3))
+data = csvread('_data/waveletData.csv');
 
-% Importa os dados
-iris_data = importdata('iris.txt');
+Y = data(:, 17);
+X = data(:, 1:16);
 
-N = size(iris_data);
-
-% Separa os dados para treinamento
-Y = iris_data(:, 5);
-X = iris_data(:, 1:4); 
+Xtrain = X(1:20000, :);
+Ytrain = Y(1:20000);
+Xpredict = X(20000:end, :);
+Ypredict = Y(20000:end);
 
 % Função SVM
-[w, b] = smo(X, Y);
+[w, b] = smo(Xtrain, Ytrain);
 
 
 % Testar a solução com o resto dos dados
 correct = 0;
-for i = 131 : N
-  if (sign(w * iris_data(i, 1:4)' - b) == iris_data(i,5))
-    correct++;
-  endif
-end
-%
-for i = 1 : 20
-  if (sign(w * iris_data(i, 1:4)' - b) == iris_data(i,5))
-    correct++;
-  endif
+for i = 1 : size(Xpredict)
+  if (sign(w * Xpredict(i,:)' - b) == Ypredict(i))
+    correct = correct +1;
+  end
 end
 
+
 % Printar resultados casos testados
-display('Dados testados: 40');
-display(['Classificação correta: ' num2str(correct)]);
-display(['Taxa de acertos: ' num2str(correct / 40 * 100) '%']);
+disp(['Dados testados: ' num2str(size(Xpredict))]);
+disp(['Classificação correta: ' num2str(correct)]);
+disp(['Taxa de acertos: ' num2str(correct / size(Xpredict, 1) * 100) '%']);
 
 % Testar delimitação dos vetores de suporte 
 % Yi(<w,Xi> - b) >= 1
 correct = 0;
 err = [];
-for i = 1 : N(1)
-  if (iris_data(i,5)*(w * iris_data(i, 1:4)' - b) >= 1)
-    correct++;
+for i = 1 : size(X, 1)
+  if (Y(i)*(w * X(i,:)' - b) >= 1)
+    correct = correct +1;
   else
-    err = [err (iris_data(i,5)*(w * iris_data(i, 1:4)' - b))];
-  endif
+    err = [err (Y(i)*(w * X(i,:)' - b))];
+  end
 end
 
 % Printar resultados
-display('');
-display('Teste de delimitação dos vetores suporte');
-display(['Dados testados: ' num2str(N(1))]);
-display(['Pontos dentro da região de separação: ' num2str(N(1) - correct)]);
-display(['Taxa de acertos: ' num2str(correct / N(1) * 100) '%']);
+disp('');
+disp('Teste de delimitação dos vetores suporte');
+disp(['Dados testados: ' num2str(N(1))]);
+disp(['Pontos dentro da região de separação: ' num2str(N(1) - correct)]);
+disp(['Taxa de acertos: ' num2str(correct /size(X,1) * 100) '%']);

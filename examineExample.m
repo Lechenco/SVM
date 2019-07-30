@@ -1,5 +1,5 @@
-## Author: Lechenco <lechenco@lechenco-Aspire-5>
-## Created: 2018-12-24
+%% Author: Lechenco <lechenco@lechenco-Aspire-5>
+%% Created: 2018-12-24
 
 function [ans] = examineExample (i2)
   % variaveis globais
@@ -21,37 +21,37 @@ function [ans] = examineExample (i2)
   if (r2 < -tol && alpha2 < C) || (r2 > tol && alpha2 > 0)
     % Escolher x1
     if size(find(alphas)) & size(find(alphas == C)) > 1
-      if size(find(alphas & alphas != C)) > 1
+      if size(find(alphas & alphas ~= C)) > 1
         % x1 deve ter o maior erro comparado a x2
         if E2 < 0
           i1 = find(E == max(E));
         else
           i1 = find(E == min(E));
-        endif
+        end
         if takeStep(i1, i2)
           ans = 1;
           return
-        endif     
-      endif
-    endif
+        end     
+      end
+    end
     
     % loop over all nonzeros and non-C alphas, start random
-    aux = find(alphas & alphas != C);
-    for i1 = aux(randperm(size(aux)))
-      if i1 && takeStep(i1(1), i2)
+    aux = find(alphas & alphas ~= C);
+    for i1 = aux(randperm(size(aux, 1)))
+      if i1 & takeStep(i1(1), i2)
           ans = 1;
           return
-        endif 
+      end 
     end
     % loop over all possible i1, start random
-    for i1 = randperm(size(alphas))
+    for i1 = randperm(size(alphas, 1))
       if takeStep(i1, i2)
         ans = 1;
         return
-      endif
+      end
     end
-  endif
+  end
   
   ans = 0;
 
-endfunction
+end

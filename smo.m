@@ -14,7 +14,7 @@ function [w, b] = smo(X0, Y0)
   Y = Y0;
   alphas = zeros(size(Y));
   b = 0;
-  w = zeros(1, size(X)(2));
+  w = zeros(1, size(X, 2));
   E = -Y;
   C = 10000;
   
@@ -24,30 +24,30 @@ function [w, b] = smo(X0, Y0)
   numChanged = 0;
   examineAll = true;
   
-  while numChanged > 0 || examineAll
-    int += 1;
+  while numChanged > 0 | examineAll
+    int = int + 1;
     numChanged = 0;
     if examineAll
       % Examinar cada exemplo
       for i = 1 : N
-        numChanged += examineExample(i);
+        numChanged = numChanged + examineExample(i);
       end
     else
-      for i = find(alphas & alphas != C)
-        numChanged += i && examineExample(i(1));
+      for i = find(alphas & alphas ~= C)
+        numChanged = numChanged + (i & examineExample(i(1)));
       end
-    endif
+    end
     
     % validação para continuar o loop
     if examineAll 
       examineAll = false;
     elseif numChanged == 0
       examineAll = true;
-    endif
-  endwhile
+    end
+  end
 
   int
   w
   b
  
-endfunction
+end
