@@ -56,5 +56,5 @@ parfor f = 1:length(files)
 end
 
 svmData(1:2,:)= [];
-save("waveletCorrentropyData.mat", 'paths', 'svmData')
+% save("waveletCorrentropyData.mat", 'paths', 'svmData')
 %csvwrite("correntropyData.csv", svmData);

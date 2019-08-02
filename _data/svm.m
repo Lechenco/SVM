@@ -1,14 +1,14 @@
 load('waveletCorrentropyData1.mat');
 %csvread('correntropyData.csv');
-%data = csvread('waveletData1.csv');
+data = csvread('waveletData.csv');
 
-data = svmData;
+%data = svmData;
 
-% File name in first column
-characteristics = [1:16];
+% Characteristics columns
+characteristics = [1:5];
 
 X = data(:,characteristics);
-Y = data(:, 33);
+Y = data(:, 21);
 
 [Y, index] = sort(Y);
 paths = paths(index);
@@ -94,10 +94,3 @@ title('ROC for Classification by Logistic Regression')
 %      idx = find(not(cellfun('isempty', idx)));
 %      disp([u(i)+':'+num2str(length(idx))])
 %  end
-
-pt = find(Y(train) == 1);
-nt = find(Y(train) == -1);
-pp = find(Y(test) == 1);
-np = find(Y(test) == -1);
-scatter(T(posi, 1),T(posi, 2), 'b')
-hold on; scatter(T(negi, 1), T(negi, 2), 'r')
