@@ -1,4 +1,4 @@
-load('waveletCorrentropyData1.mat');
+load('test.mat');
 %csvread('correntropyData.csv');
 data = csvread('waveletData.csv');
 
@@ -11,14 +11,14 @@ X = data(:,characteristics);
 Y = data(:, 21);
 
 [Y, index] = sort(Y);
-paths = paths(index);
+% paths = paths(index);
 X = X(index, :);
 
 posi = find(Y == 1);
 negi = find(Y == -1);
 randomPosi = posi(randperm(length(posi)));
 randomNegi = negi(randperm(length(negi)));
-trainLength = fix(length(randomPosi)*0.8);
+trainLength = fix(length(randomPosi)*0.5);
 train = [randomPosi(1:trainLength -1); randomNegi(1:trainLength -1)];
 test = [randomPosi(trainLength:end); randomNegi(trainLength:end)];
  
