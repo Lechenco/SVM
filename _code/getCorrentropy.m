@@ -1,6 +1,21 @@
 function [corr] = getCorrentropy(signalWindow, nLevels, wFamily)
-%GETCORRENTROPY Summary of this function goes here
-%   Detailed explanation goes here
+%GETCORRENTROPY calcules the correntropy between 
+% each Wavelet Leaves and the original signal
+% 
+% DEPENDECIES: ITL toolbox for Correntropy function
+% 
+% [corr] = getCorrentropy(signalWindow, nLevels, wFamily)
+% 
+% PARAMETERS:
+%     signalWindow - array with a ECG signal window 
+%
+%     nLevels - integer with number of Wavelet Levels
+%
+%     wFamily - Wavelet Family (e.g.: 'db3')
+%
+% RETURN:
+%     corr - array with 2^nLevels correntopy indices
+
     sigma = 0.01;
     wtree = wpdec(signalWindow, nLevels, wFamily);
     corr = zeros(1, 2^nLevels);

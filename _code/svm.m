@@ -1,11 +1,15 @@
 load('test.mat');
 %csvread('correntropyData.csv');
 % data = csvread('waveletData.csv');
-kernel = 'linear';
+kernel = 'rbf';
 
 data = svmData;
-% data = data(randperm(size(data,1)),:);
-% data = data(1:20000,:);
+
+% for i = 1:length(paths)
+%     if isempty(regexp(paths(i), 'C[0-9]+'))
+%         data = [data; svmData(i,:)];
+%     end
+% end
 
 % Characteristics columns
 characteristics = [1:16];

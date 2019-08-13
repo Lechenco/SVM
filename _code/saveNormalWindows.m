@@ -30,8 +30,8 @@ function [count] = saveNormalWindows(...
         path = folder + annotationData.fileName;
         if isempty(find(~isHealty(signalAnns), 1))
             count = count + 1;   
-    %          save(destination + "N" + int2str(count) + ...
-    %              ".mat", 'signalWindow', 'annType', 'signalAnns', 'path')
+            save(destination + "B" + int2str(count) + ".mat",...
+                'signalWindow', 'annType', 'signalAnns', 'path')
         end
     end
 end

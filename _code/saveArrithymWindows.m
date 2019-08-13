@@ -25,8 +25,8 @@ function [count] = saveArrithymWindows(...
         signalWindow = resample(signalWindow, 128, Fs);
         path = folder + annotationData.fileName;
         count = count + 1;
-        save(destination + "A" + int2str(count) + ...
-               ".mat", 'signalWindow', 'annType', 'signalAnns', 'path')
+        save(destination + "A" + int2str(count) + ".mat"...
+               , 'signalWindow', 'annType', 'signalAnns', 'path')
     end
 end
 

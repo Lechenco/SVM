@@ -8,14 +8,14 @@ paths = [];
 wFamily = 'db3';
 
 % Metadata
-% for f = 1:size(files)
-%     if files(f).isdir
-%         continue
-%     end
-%     
-%     path = folder + files(f).name;
-%     paths = [paths path];
-% end
+ for f = 1:size(files)
+     if files(f).isdir
+         continue
+     end
+     
+     path = folder + files(f).name;
+     paths = [paths path];
+ end
 
 parfor f = 1:length(files)
     if files(f).isdir

@@ -16,13 +16,13 @@ for i = 1:size(annotationData)
         destination, count);
 end
 disp("Number of windows finded: " + int2str(count))
-% 
-% folder = "../_data/Normal/";
-% load("../_data/analisys1.mat");
-% count = 0
-% for i = 1:size(annotationData)
-%     count = saveNormalWindows(annotationData(i), folder, destination,...
-%         count,windowsRemaining);
-% end
-% 
-% disp("Number of windows finded: " + int2str(count))
+ 
+ folder = "../_data/Normal/";
+ load("../_data/analisys1.mat");
+ count = 0;
+ for i = 1:size(annotationData)
+     count = saveNormalWindows(annotationData(i), folder, destination,...
+         count,windowsRemaining);
+ end
+ 
+ disp("Number of windows finded: " + int2str(count))

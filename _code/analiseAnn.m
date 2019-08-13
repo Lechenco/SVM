@@ -1,6 +1,6 @@
 clear all
 
-folder = "../_data/_annotations/";
+folder = "../_data/Arritmia/_annotations/";
 files = dir(folder);
 
 names = [];
