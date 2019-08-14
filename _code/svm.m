@@ -16,7 +16,8 @@ characteristics = [1:16];
 X = data(:,characteristics);
 Y = data(:, 33);
 
-[Xtrain, Xpredict, Ytrain, Ypredict] = getTrainTestData(X, Y, 0.8);
+trainId = separateTrainAndTest(Y);
+[Xtrain, Xpredict, Ytrain, Ypredict] = getTrainTestData(X, Y, trainId);
 
 SVMModel = fitSVM(Xtrain, Ytrain, kernel, 1);
 
@@ -37,4 +38,4 @@ noMansLand = size(find(score(:, 1) < treshold & ...
 disp(['Pontos entre os vetores de suporte: ' num2str(noMansLand) '%']);
 
 % plot Receiver Operating Characteristc
-plotROC(Ypredict,score)
+plotROC(Ypredict,score, -1)

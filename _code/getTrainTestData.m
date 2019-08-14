@@ -1,16 +1,16 @@
-function [Xtrain, Xtest, Ytrain, Ytest] = getTrainTestData(X, Y, p)
+function [Xtrain, Xtest, Ytrain, Ytest] = getTrainTestData(X, Y, trainId)
 %GETTRAINTESTDATA return the train and test data
 % arrays.
 % 
-% [Xtrain, Xtest, Ytrain, Ytest] = getTrainTestData(X, Y, p)
+% [Xtrain, Xtest, Ytrain, Ytest] = getTrainTestData(X, Y, trainId)
 % 
 % PARAMETERS:
-%     X - NxM characteristics Matrix.
+%     X - NxM-size characteristics Matrix.
 %
-%     Y - N labeled intance array.
+%     Y - N-size labeled intance array.
 %
-%     p [OPTIONAL] - Double number for the 
-%     proportion between test and train (default: 0.8).
+%     trainId - N-size logical array index, separating
+%     train Data (True) and test Data (False).
 %
 % RETURN:
 %     Xtrain - (N*p)xM matrix with the training characteristics.
@@ -23,11 +23,11 @@ function [Xtrain, Xtest, Ytrain, Ytest] = getTrainTestData(X, Y, p)
     
     if ~exist('p', 'var'); p = 0.8; end
     
-    [train, test] = separateTrainAndTest(Y, p);
-    Xtrain = X(train, :);
-    Ytrain = Y(train);
-    Xtest = X(test, :);
-    Ytest = Y(test);
+%     [train, test] = separateTrainAndTest(Y, p);
+    Xtrain = X(trainId, :);
+    Ytrain = Y(trainId);
+    Xtest = X(~trainId, :);
+    Ytest = Y(~trainId);
     
 end
 

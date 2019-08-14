@@ -1,7 +1,34 @@
 function [count] = saveNormalWindows(...
         annotationData, folder, destination, startCount, lastCount)
-%SAVENORMALWINDOWS Summary of this function goes here
-%   Detailed explanation goes here
+%SAVENORMALWINDOWS extract all the ECG signal
+% windows that have no anomalie from a 
+% MIT Normal Sinus Database signal.
+%
+% [count] = saveNormalWindows(annotationData, folder, destination)
+% [count] = saveNormalWindows(annotationData, folder, destination, startCount)
+% [count] = saveNormalWindows(annotationData, folder, destination, startCount, lastCount)
+% 
+% PARAMETERS:
+%     annotationData - struct with the original 
+%     signal metadata.
+%
+%     folder - path to the folder with the original
+%     signal.
+%
+%     destination - destination folder path.
+%
+%     startCount [OPTIONAL]- Initial count value
+%     (default: 0).
+% 
+%     lastCount [OPTIONAL] - Final count value, 
+%     if this limit is reached the function stops.
+%     (default: inf)
+%
+% RETURN:
+%     count - integer with the number of windows founded.
+%     If startCount ~= 0 returns the startCount adding
+%     the number of windows founded.
+
     if ~exist('startCount', 'var'); count = 0;
     else; count = startCount; end
     if ~exist('lastCount', 'var'); lastCount = inf; end

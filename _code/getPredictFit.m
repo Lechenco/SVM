@@ -42,5 +42,6 @@ function [correct, correctId, noMansCorrect] = getPredictFit(...
         end
       end
     end
+    correctId = boolean(correctId);
 end
 

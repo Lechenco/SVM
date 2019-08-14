@@ -1,9 +1,37 @@
 function [count] = saveArrithymWindows(...
-        annotationData, folder, destination, startCount)
-%SAVEARRITHYMWINDOWS Summary of this function goes here
-%   Detailed explanation goes here
+        annotationData, folder, destination, startCount, lastCount)
+%SAVEARRITHYMWINDOWS extract all the ECG signal
+% windows that have a Arrithym anomalie from a 
+% MIT Arrithym Database signal.
+%
+% [count] = saveArrithymWindows(annotationData, folder, destination)
+% [count] = saveArrithymWindows(annotationData, folder, destination, startCount)
+% [count] = saveArrithymWindows(annotationData, folder, destination, startCount, lastCount)
+% 
+% PARAMETERS:
+%     annotationData - struct with the original 
+%     signal metadata.
+%
+%     folder - path to the folder with the original
+%     signal.
+%
+%     destination - destination folder path.
+%
+%     startCount [OPTIONAL]- Initial count value
+%     (default: 0).
+% 
+%     lastCount [OPTIONAL] - Final count value, 
+%     if this limit is reached the function stops.
+%     (default: inf)
+%
+% RETURN:
+%     count - integer with the number of windows founded.
+%     If startCount ~= 0 returns the startCount adding
+%     the number of windows founded.
+
     if ~exist('startCount', 'var'); count = 0;
     else; count = startCount; end
+    if ~exist('lastCount', 'var'); lastCount = inf; end
     
     windowSize = 1440;
     
@@ -18,6 +46,10 @@ function [count] = saveArrithymWindows(...
     disp("Number anomalies: " + int2str(size(anomalyIndex, 1)))
     
     for j = 1:size(anomalyIndex)
+         if count >= lastCount
+            break; 
+         end 
+        
         [signalWindow, annType, signalAnns] = createNewWindow(... 
                 annotationData, sig, anomalyIndex(j), windowSize);
            

@@ -1,4 +1,4 @@
-function [corr] = getCorrentropy(signalWindow, nLevels, wFamily)
+function [corr] = getCorrentropy(signal, nLevels, wFamily)
 %GETCORRENTROPY calcules the correntropy between 
 % each Wavelet Leaves and the original signal
 % 
@@ -7,17 +7,17 @@ function [corr] = getCorrentropy(signalWindow, nLevels, wFamily)
 % [corr] = getCorrentropy(signalWindow, nLevels, wFamily)
 % 
 % PARAMETERS:
-%     signalWindow - array with a ECG signal window 
+%     signal - array with a ECG signal.
 %
-%     nLevels - integer with number of Wavelet Levels
+%     nLevels - integer with number of Wavelet Levels.
 %
-%     wFamily - Wavelet Family (e.g.: 'db3')
+%     wFamily - Wavelet Family (e.g.: 'db3').
 %
 % RETURN:
-%     corr - array with 2^nLevels correntopy indices
+%     corr - array with 2^nLevels correntopy indices.
 
     sigma = 0.01;
-    wtree = wpdec(signalWindow, nLevels, wFamily);
+    wtree = wpdec(signal, nLevels, wFamily);
     corr = zeros(1, 2^nLevels);
     
     newt = getResetWtree(wtree);
@@ -27,7 +27,7 @@ function [corr] = getCorrentropy(signalWindow, nLevels, wFamily)
         cfs = read(wtree, 'data', node);
         newt = write(newt, 'data', node, cfs);
         X = wprec(newt);
-        corr(i) =  corren(signalWindow, X, sigma);
+        corr(i) =  corren(signal, X, sigma);
         i = i +1;
         cfs(:) = 0;
         newt = write(newt, 'data', node, cfs);
