@@ -24,7 +24,7 @@ function [trainId] = separateTrainAndTest(Y, p)
     trainLengthNeg = fix(length(randomNegi)*p);
  
     trainId = zeros(length(Y), 1);
-    trainId(randomPosi(1:trainLengthPos)) = 1;
+    trainId(randomPosi(1:trainLengthPos)) = 1; % Changed
     trainId(randomNegi(1:trainLengthNeg)) = 1;
     trainId = boolean(trainId);
  

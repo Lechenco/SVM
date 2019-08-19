@@ -33,6 +33,6 @@ function [SVMModel] = fitSVM(Xtrain, Ytrain, kernel, verbose)
     
     disp('Training SVM Model...')
     SVMModel = fitcsvm(Xtrain, Ytrain, 'KernelFunction', kernel, ...
-'KernelScale','auto', 'verbose', verbose);
+'KernelScale','auto', 'verbose', verbose, 'DeltaGradientTolerance', 1e-4);
 end
 

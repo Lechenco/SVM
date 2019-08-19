@@ -2,14 +2,16 @@ function [] = trackErrors(correctId, paths)
 % TRACKERRORS Function
 
   correctId = boolean(correctId);
-  aux = paths(correctId)';
+  aux = paths(~correctId)';
   origin = [];
   type = [];
+
   for i = 1:length(aux)
       f = load(aux(i));
       folder = split(aux(i), '/');
-      type = [type; path+f.annType];
-      origin = [origin; path+'/'+folder(3)];
+      file = char(folder(4));
+%       type = [type; f.path+f.annType];
+      origin = [origin; f.path+'/'+file(1)];
   end
   
   u = unique(origin)';
