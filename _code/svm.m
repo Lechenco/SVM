@@ -12,9 +12,9 @@ data = svmData;
 %  end
 
 % Characteristics columns
-characteristics = [1:32];
+characteristics = [1:20];
 X = data(:,characteristics);
-Y = data(:, 33);
+Y = data(:, 21);
 
 trainId = separateTrainAndTest(Y, 0.8);
 [Xtrain, Xpredict, Ytrain, Ypredict] = getTrainTestData(X, Y, trainId);

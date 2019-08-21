@@ -1,6 +1,6 @@
 clear all
 
-folder = "../_data/Arritmia/_annotations/";
+folder = "Normal/_annotations/";
 files = dir(folder);
 
 names = [];
@@ -24,4 +24,4 @@ for f = 1:size(names, 2)
     annotationData = [annotationData; annotation];
 end
 
-save('../_data/analisys.mat', 'annotationData')
+save('../_data/analisys1.mat', 'annotationData')

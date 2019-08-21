@@ -3,7 +3,7 @@ clear all
 nLevels = 4;
 folder = "../_data/_test/";
 files = dir(folder);
-svmData = zeros(length(files), 2^(nLevels+1) +1);
+svmData = zeros(length(files), 2^nLevels +5);%2^(nLevels+1) +1);
 paths = [];
 wFamily = 'db3';
 
@@ -29,7 +29,7 @@ parfor f = 1:length(files)
 %     s = std(signalWindow)*(4/3/length(signalWindow))^(1/5);
 
     E = getWaveletEnergy(signalWindow, nLevels, wFamily);
-    corr = getCorrentropy(signalWindow, nLevels, wFamily);
+    corr = [];%getCorrentropy(signalWindow, nLevels, wFamily);
     
     % classify: 1 Normal, -1 Anormal
      haveAnomalie = 1 - 2 * ~isHealty(signal.annType);

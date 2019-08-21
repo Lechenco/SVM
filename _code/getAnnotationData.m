@@ -12,9 +12,9 @@ function [annotation] = getAnnotationData(path)
 % RETURN:
 %     annotation - struct with mainly informations
 %     of the extracted file.
-    [ann,anntype,subtype,chan,num,comments] = rdann(path);
+    [ann,anntype,subtype,chan,num,comments] = rdann(path, 'atr');
     
-    annotation.fileName = names(1,f);
+    annotation.fileName = path;
     annotation.numberAnn = size(ann, 1);
     annotation.ann = ann;
     annotation.anntype = anntype;

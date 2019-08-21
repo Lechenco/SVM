@@ -20,7 +20,7 @@ function [trainId] = separateTrainAndTest(Y, p)
     negi = find(Y == -1);
     randomPosi = posi(randperm(length(posi)));
     randomNegi = negi(randperm(length(negi)));
-    trainLengthPos = fix(length(randomPosi)*p);
+    trainLengthPos = fix(length(randomNegi)*p);
     trainLengthNeg = fix(length(randomNegi)*p);
  
     trainId = zeros(length(Y), 1);
