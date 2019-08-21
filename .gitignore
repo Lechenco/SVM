@@ -5,3 +5,9 @@ _data/Normal
 _data/Arritmia
 _data/_windowSignals
 _data/_test
+.vscode/
+
+*.csv
+*.m~
+*.mat
+a.out
