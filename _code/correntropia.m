@@ -1,9 +1,12 @@
 clear all
 
 nLevels = 4;
+nExpandLevels = 2;
+expandLeaves = [1 2];
 folder = "../_data/_test/";
 files = dir(folder);
-svmData = zeros(length(files), 2^nLevels +5);%2^(nLevels+1) +1);
+svmData = zeros(length(files), 2^nLevels +...
+                length(expandLeaves)*2^nExpandLevels + 1); % Changed
 paths = [];
 wFamily = 'db3';
 
@@ -28,7 +31,8 @@ parfor f = 1:length(files)
     %Silveman's rule
 %     s = std(signalWindow)*(4/3/length(signalWindow))^(1/5);
 
-    E = getWaveletEnergy(signalWindow, nLevels, wFamily);
+    E = getWaveletEnergy(signalWindow, nLevels, wFamily, ...
+                nExpandLevels, expandLeaves);
     corr = [];%getCorrentropy(signalWindow, nLevels, wFamily);
     
     % classify: 1 Normal, -1 Anormal
