@@ -12,9 +12,17 @@ data = svmData;
 %  end
 
 % Characteristics columns
-characteristics = [1:20];
+characteristics = [1:24];
 X = data(:,characteristics);
-Y = data(:, 21);
+Y = data(:, 25);
+
+posi = find(Y == 1);
+negi = find(Y == -1);
+posi = posi(randperm(length(posi)));
+posi = posi(1:length(negi));
+Y = [Y(negi); Y(posi)];
+X = [X(negi,:); X(posi, :)];
+paths = [paths(negi); paths(posi)];
 
 trainId = separateTrainAndTest(Y, 0.8);
 [Xtrain, Xpredict, Ytrain, Ypredict] = getTrainTestData(X, Y, trainId);
@@ -36,6 +44,9 @@ disp(['Taxa de acertos: ' num2str(correct / size(Xpredict, 1) * 100) '%']);
 noMansLand = size(find(score(:, 1) < treshold & ...
     score(:, 1) > -treshold), 1) / size(Xpredict, 1) * 100;
 disp(['Pontos entre os vetores de suporte: ' num2str(noMansLand) '%']);
+
+[accuracy, precision, recall, f1score] =...
+            getMetrics(Ypredict, label)
 
 % plot Receiver Operating Characteristc
 plotROC(Ypredict,score, -1)
