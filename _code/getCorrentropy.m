@@ -1,4 +1,4 @@
-function [corr] = getCorrentropy(signal, nLevels, wFamily)
+function [corr] = getCorrentropy(signal, nLevels, wFamily, sigma)
 %GETCORRENTROPY calcules the correntropy between 
 % each Wavelet Leaves and the original signal
 % 
@@ -16,7 +16,8 @@ function [corr] = getCorrentropy(signal, nLevels, wFamily)
 % RETURN:
 %     corr - array with 2^nLevels correntopy indices.
 
-    sigma = 0.01;
+    if ~exist('sigma', 'var') sigma = 0.005; end
+    
     wtree = wpdec(signal, nLevels, wFamily);
     corr = zeros(1, 2^nLevels);
     

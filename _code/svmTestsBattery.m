@@ -3,8 +3,12 @@ kernel = 'rbf';
 runs = 30;
 
 % Characteristics columns
-characteristics = [1:24];
+characteristics = [1:20];
 
+trainAccuracy = [];
+trainPrecision = [];
+trainRecall = [];
+trainF1score = [];
 runsAccuracy = [];
 runsPrecision = [];
 runsRecall = [];
@@ -15,7 +19,7 @@ for i = 1:runs
     fprintf("Running %d of %d times...\n", i, runs);
     
     X = data(:,characteristics);
-    Y = data(:, 25);
+    Y = data(:, 37);
 
     posi = find(Y == 1);
     negi = find(Y == -1);
@@ -30,6 +34,15 @@ for i = 1:runs
 
     %Train
     SVMModel = fitSVM(Xtrain, Ytrain, kernel, 0);
+    %Predict Train
+    [label,score] = predict(SVMModel,Xtrain);
+    % Metrics
+    [accuracy, precision, recall, f1score] = getMetrics(Ytrain, label);
+    trainAccuracy = [trainAccuracy accuracy];
+    trainPrecision = [trainPrecision precision];
+    trainRecall = [trainRecall recall];
+    trainF1score = [trainF1score f1score];
+    
     %Predict
     [label,score] = predict(SVMModel,Xpredict);
     % Metrics
@@ -40,7 +53,12 @@ for i = 1:runs
     runsRecall = [runsRecall recall];
     runsF1score = [runsF1score f1score];
 end
-    
+
+fprintf("Train Mean Accuracy: %.5f\n", mean(trainAccuracy));
+fprintf("Train Mean Precision: %.5f\n", mean(trainPrecision));
+fprintf("Train Mean Recall: %.5f\n", mean(trainRecall));
+fprintf("Train Mean F1score: %.5f\n", mean(trainF1score));
+
 fprintf("Mean Accuracy: %.5f\n", mean(runsAccuracy));
 fprintf("Mean Precision: %.5f\n", mean(runsPrecision));
 fprintf("Mean Recall: %.5f\n", mean(runsRecall));

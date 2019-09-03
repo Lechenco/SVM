@@ -12,9 +12,9 @@ data = svmData;
 %  end
 
 % Characteristics columns
-characteristics = [1:24];
+characteristics = [1:36];
 X = data(:,characteristics);
-Y = data(:, 25);
+Y = data(:, 37);
 
 posi = find(Y == 1);
 negi = find(Y == -1);
@@ -22,7 +22,7 @@ posi = posi(randperm(length(posi)));
 posi = posi(1:length(negi));
 Y = [Y(negi); Y(posi)];
 X = [X(negi,:); X(posi, :)];
-paths = [paths(negi); paths(posi)];
+paths = [paths(negi(1:30000)); paths(posi(1:30000))];
 
 trainId = separateTrainAndTest(Y, 0.8);
 [Xtrain, Xpredict, Ytrain, Ypredict] = getTrainTestData(X, Y, trainId);
