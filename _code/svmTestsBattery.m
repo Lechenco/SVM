@@ -3,7 +3,7 @@ kernel = 'rbf';
 runs = 30;
 
 % Characteristics columns
-characteristics = [1:20];
+characteristics = [2:6 17:20];
 
 trainAccuracy = [];
 trainPrecision = [];

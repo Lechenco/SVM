@@ -5,14 +5,18 @@ kernel = 'rbf';
 
 data = svmData;
 
-%  for i = 1:length(paths)
-%      if isempty(regexp(paths(i), 'C[0-9]+'))
-%          data = [data; svmData(i,:)];
-%      end
-%  end
+
+posi = find(svmData(:,37) == 1);
+negi = find(svmData(:,37) == -1);
+data = svmData(negi, :);
+for i = 1:length(posi)
+      if isempty(regexp(paths(posi(i)), 'B[0-9]+'))
+          data = [data; svmData(posi(i),:)];
+      end
+end
 
 % Characteristics columns
-characteristics = [1:36];
+characteristics = [1:20];
 X = data(:,characteristics);
 Y = data(:, 37);
 
@@ -20,9 +24,10 @@ posi = find(Y == 1);
 negi = find(Y == -1);
 posi = posi(randperm(length(posi)));
 posi = posi(1:length(negi));
+posi = posi(1:30000); negi = negi(1:30000);
 Y = [Y(negi); Y(posi)];
 X = [X(negi,:); X(posi, :)];
-paths = [paths(negi(1:30000)); paths(posi(1:30000))];
+%paths = [paths(negi); paths(posi)];
 
 trainId = separateTrainAndTest(Y, 0.8);
 [Xtrain, Xpredict, Ytrain, Ypredict] = getTrainTestData(X, Y, trainId);
@@ -45,9 +50,8 @@ noMansLand = size(find(score(:, 1) < treshold & ...
     score(:, 1) > -treshold), 1) / size(Xpredict, 1) * 100;
 disp(['Pontos entre os vetores de suporte: ' num2str(noMansLand) '%']);
 
-[accuracy, precision, recall, f1score] =...
-            getMetrics(Ypredict, label)
+[accuracy, precision, recall, f1score] = getMetrics(Ypredict, label)
 
 % plot Receiver Operating Characteristc
 plotROC(Ypredict,score, -1)
-trackErrors(correctId, paths);
+%trackErrors(correctId, paths);
