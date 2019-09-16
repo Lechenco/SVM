@@ -1,12 +1,14 @@
 _images
 smo
 a.out
+_articles/_highLighted
 _data/Normal
 _data/Arritmia
 _data/_windowSignals
 _data/_test
 .vscode/
 
+*.txt
 *.csv
 *.m~
 *.mat
