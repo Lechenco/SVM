@@ -37,8 +37,7 @@ function [count] = saveArrithymWindows(...
     
     disp("Loading " + annotationData.fileName + "...")
     s = load(folder + annotationData.fileName);
-    Fs = s.Fs;
-    sig = s.sig;
+    Fs = s.Fs; sig = s.sig;
     
     anomalyIndex = annotationData.ann(~isHealty(annotationData.anntype));
     anomalyIndex = anomalyIndex((anomalyIndex > windowSize & ...
@@ -61,4 +60,3 @@ function [count] = saveArrithymWindows(...
                , 'signalWindow', 'annType', 'signalAnns', 'path')
     end
 end
-

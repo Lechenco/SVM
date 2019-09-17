@@ -1,14 +1,20 @@
 function [accuracy, precision, recall, f1score] =...
-            getMetrics(Ypredict, trueLabels)
-%GETMETRICS Summary of this function goes here
-%   Detailed explanation goes here
-    
-    [CM, order] = confusionmat(trueLabels, Ypredict);
-    
-%     disp('Confusion Matrix:')
-%     fprintf("T\\P \t %d \t %d\n", order(1), order(2));
-%     fprintf("%d \t %d \t %d\n", order(1), CM(1,1), CM(1, 2));
-%     fprintf("%d \t %d \t %d\n", order(2), CM(2,1), CM(2, 2));
+            getMetrics(predictLabels, trueLabels)
+%GETMETRICS return the mainly metrics from predict data of binary class
+% 
+% [accuracy, precision, recall, f1score] = getMetrics(predictLabels, trueLabels)
+% 
+% PARAMETERS
+%     predictLabels - Labels array from the predict techinique
+%     trueLabels - Label arrays from the dataset with the right labels.
+%     
+% RETURN
+%     accuracy - (truePositive + trueNegative) / N
+%     precision - truePositive / (truePositive + falsePositive)
+%     recall - truePositive / (truePositive + falseNegative)
+%     f1score - 2 * precision * recall / (precision + recall)
+
+    [CM, order] = confusionmat(trueLabels, predictLabels);
     
     truePositive = CM(1,1); falseNegative = CM(1,2);
     falsePositive = CM(2,1); trueNegative = CM(2,2);

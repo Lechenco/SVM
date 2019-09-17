@@ -1,7 +1,14 @@
-function [] = printConfusion(Ypredict, trueLabels)
-%PRINTCONFUSION Summary of this function goes here
-%   Detailed explanation goes here
-    [CM, order] = confusionmat(trueLabels, Ypredict);
+function [] = printConfusion(predictLabels, trueLabels)
+%PRINTCONFUSION prints confusion matrix from the binaries array 
+% Ypredict and trueLabels
+% 
+%  printConfusion(predictLabels, trueLabels)
+% 
+% PARAMETERS
+%     predictLabels - Labels array from the predict techinique
+%     trueLabels - Label arrays from the dataset with the right labels. 
+
+    [CM, order] = confusionmat(trueLabels, predictLabels);
     
     disp('Confusion Matrix:')
     fprintf("T\\P \t %d \t %d\n", order(1), order(2));

@@ -1,27 +1,22 @@
 clear all
-
+% Not works with ../ in the path
 folder = "../_data/Arritmia/_annotations/";
 files = dir(folder);
 
-names = [];
-
+names = []; 
+annotationData = [];
 for f = 1:size(files)
-   if files(f).isdir
+    if files(f).isdir
         continue
    end
-   aux = string(split(files(f).name, "."));
-   names = [names aux];
-end
-clear f; clear aux;
-
-annotationData = [];
-
-for f = 1:size(names, 2)
-    file = num2str(folder + names(1,f));
-    format = num2str(names(2,f));
-    annotation = getAnnotationData(file);
+   name = string(split(files(f).name, "."));
+%    names = [names aux];
+   
+   file = num2str(folder + name(1));
+   format = num2str(name(2));
+   annotation = getAnnotationData(file);
     
-    annotationData = [annotationData; annotation];
+   annotationData = [annotationData; annotation];
 end
 
-save('../_data/analisys.mat', 'annotationData')
+%save('../_data/analisys.mat', 'annotationData')
