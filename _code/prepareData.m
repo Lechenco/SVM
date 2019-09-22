@@ -29,7 +29,7 @@ function [X, Y, idx] = prepareData(svmData, characteristics, slice)
         idx = sliceDatabase(Y, slice);
         Y = Y(idx); X = X(idx,:);
     else
-        idx = 1:lenght(Y);
+        idx = 1:length(Y);
     end
 end
 

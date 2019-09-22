@@ -1,8 +1,8 @@
 clear all; close all;
 
-folder = "../_data/";
-destination = "../_data/_windowSignals/";
-load("../_data/analisys.mat");
+folder = "_data/";
+destination = "_data/_windowSignals/";
+load("_data/analisys.mat");
 count = 0;
 % Type A
 for i = 1:size(annotationData)
@@ -19,8 +19,8 @@ for i = 1:size(annotationData)
 end
 disp("Number of windows finded: " + int2str(count))
  
- folder = "../_data/";
- load("../_data/analisys1.mat");
+ folder = "_data/";
+ load("_data/analisys1.mat");
  count = 0;
  % Type C
  for i = 1:size(annotationData)

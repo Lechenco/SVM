@@ -1,6 +1,6 @@
 clear all;
 nLevels = 4; wFamily = 'db3';
-folder = "../_data/_test/";
+folder = "_data/_test/";
 wRows = 2^(nLevels); cRows = 2^(nLevels);
 sigmas = [0.08];
 

@@ -9,7 +9,7 @@ function [] = trackErrors(correctId, paths)
   for i = 1:length(aux)
       f = load(aux(i));
       folder = split(aux(i), '/');
-      file = char(folder(4));
+      file = char(folder(end));
 %       type = [type; f.path+f.annType];
       origin = [origin; f.path+'/'+file(1)];
   end

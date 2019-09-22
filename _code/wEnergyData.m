@@ -3,10 +3,12 @@ clear all
 nLevels = 4;
 nExpandLevels = 2;
 expandLeaves = [1];
-folder = "../_data/_windowSignals/";
+folder = "_data/_windowSignals/";
+destinationFile = "_data/svmData.mat";
 files = dir(folder);
 svmData = zeros(length(files), 2^(nLevels) +...
                 length(expandLeaves)*2^nExpandLevels + 1);
+annArray = strings(length(files), 1);
 paths = [];
 wFamily = 'db3';
 
@@ -29,7 +31,9 @@ parfor f = 1:length(files)
                 nExpandLevels, expandLeaves);
      haveAnomalie = checkAnomalie(signal.annType);
      svmData(f, :) = [E haveAnomalie];
+     annArray(f) = join(signal.signalAnns');
 end
 
 svmData(1:2,:)= [];
-save("test1.mat", 'paths', 'svmData')
+annArray(1:2) = [];
+save(destinationFile, 'paths', 'svmData', 'annArray')

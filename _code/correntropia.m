@@ -3,7 +3,7 @@ clear all
 nLevels = 4;
 nExpandLevels = 2;
 expandLeaves = [1];
-folder = "../_data/_test/";
+folder = "_data/_test/";
 files = dir(folder);
 svmData = zeros(length(files), 2^(nLevels +1) +...
                 length(expandLeaves)*2^nExpandLevels + 1); % Changed

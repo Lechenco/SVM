@@ -1,6 +1,7 @@
 clear all
-% Not works with ../ in the path
-folder = "../_data/Arritmia/_annotations/";
+
+folder = "_data/Arritmia/_annotations/";
+% folder = "_data/Normal/_annotations/";
 files = dir(folder);
 
 names = []; 
@@ -10,7 +11,6 @@ for f = 1:size(files)
         continue
    end
    name = string(split(files(f).name, "."));
-%    names = [names aux];
    
    file = num2str(folder + name(1));
    format = num2str(name(2));
@@ -19,4 +19,5 @@ for f = 1:size(files)
    annotationData = [annotationData; annotation];
 end
 
-%save('../_data/analisys.mat', 'annotationData')
+save('../_data/analisys.mat', 'annotationData')
+% save('../_data/analisys1.mat', 'annotationData')
