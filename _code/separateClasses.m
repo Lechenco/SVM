@@ -6,10 +6,10 @@ function [classes] = separateClasses(annArrays, regexPos, regexNeg)
     classes = zeros(N, 1);
     
     for i = 1:N
-        if length(regexp(annArrays(i), regexPos)) == 1
+        if ~isempty(regexp(annArrays(i), regexPos, 'once'))
             classes(i) = classes(i) + 1;
         end
-        if length(regexp(annArrays(i), regexNeg)) == 1
+        if ~isempty(regexp(annArrays(i), regexNeg, 'once'))
             classes(i) = classes(i) - 1;
         end
     end
