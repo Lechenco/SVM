@@ -40,32 +40,44 @@ trainidx3 = C3(1:pTrain*slice);
 testidx1 = C1(pTrain*slice+1:end); testidx2 = C2(pTrain*slice+1:end);
 testidx3 = C3(pTrain*slice+1:end);
 
-% SVM A: N - LBB
-Xtrain = X([trainidx1; trainidx2], :); Ytrain = Y([trainidx1; trainidx2]);
-SVMModelA = fitSVM(Xtrain, Ytrain, kernel, verbose);
-
-% SVM B: N - V
-Xtrain = X([trainidx1; trainidx3], :); Ytrain = Y([trainidx1; trainidx3]);
-SVMModelB = fitSVM(Xtrain, Ytrain, kernel, verbose);
-
-% SVM A: V - LBB
-Xtrain = X([trainidx3; trainidx2], :); Ytrain = Y([trainidx3; trainidx2]);
-SVMModelC = fitSVM(Xtrain, Ytrain, kernel, verbose);
-
-% Test
-Xtest = X([testidx1; testidx2; testidx3], :); 
+Xtrain = X([trainidx1; trainidx2; trainidx3], :);
+Ytrain = Y([trainidx1; trainidx2; trainidx3]);
+Xtest = X([testidx1; testidx2; testidx3], :);
 Ytest = Y([testidx1; testidx2; testidx3]);
 
+% Normal
+YtrainN = Ytrain;
+YtrainN(Ytrain ~= 1) = -1;
+SVMModelA = fitSVM(Xtrain, YtrainN, kernel, verbose);
+
+% V
+YtrainV = Ytrain;
+YtrainV(Ytrain ~= 4) = -1;
+SVMModelB = fitSVM(Xtrain, YtrainV, kernel, verbose);
+
+% L
+YtrainL = Ytrain;
+YtrainL(Ytrain ~= 2) = -1;
+SVMModelC = fitSVM(Xtrain, YtrainL, kernel, verbose);
+
+% Predict
 [labelA,scoreA] = predict(SVMModelA,Xtest);
 [labelB,scoreB] = predict(SVMModelB,Xtest);
 [labelC,scoreC] = predict(SVMModelC,Xtest);
 
-predTest = [labelA labelB labelC];
+predLabels = [labelA labelB labelC];
 
-pred = mode(predTest,2);   %# voting: clasify as the class receiving most votes
-%# performance
-cmat = confusionmat(Ytest,pred);
+predTest = [scoreA(:, 2) scoreB(:, 2) scoreC(:, 2)];
+% predTet(predTest < 0) = 0; 
+% predTest = abs(predTest);
+[m, i] = max(predTest, [], 2);
+
+predictLabel = Ytest;
+for j = 1:length(predictLabel)
+    predictLabel(j) = predLabels(j, i(j));
+end
+
+cmat = confusionmat(Ytest,predictLabel);
 acc = 100*sum(diag(cmat))./sum(cmat(:));
-fprintf('SVM (1-against-1):\naccuracy = %.2f%%\n', acc);
+fprintf('SVM (1-against-A):\naccuracy = %.2f%%\n', acc);
 fprintf('Confusion Matrix:\n'), disp(cmat)
-

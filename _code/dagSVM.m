@@ -26,6 +26,7 @@ svmData = svmData(classes ~= 0 & classes ~= 6,:);
 annArray = annArray(classes ~= 0 & classes ~= 6);
 paths = paths(classes ~= 0 & classes ~= 6);
 
+
 % Prepare Data
 Y = svmData(:, end);
 X = svmData(:, characteristics);
@@ -48,24 +49,26 @@ SVMModelA = fitSVM(Xtrain, Ytrain, kernel, verbose);
 Xtrain = X([trainidx1; trainidx3], :); Ytrain = Y([trainidx1; trainidx3]);
 SVMModelB = fitSVM(Xtrain, Ytrain, kernel, verbose);
 
-% SVM A: V - LBB
+% SVM C: V - LBB
 Xtrain = X([trainidx3; trainidx2], :); Ytrain = Y([trainidx3; trainidx2]);
 SVMModelC = fitSVM(Xtrain, Ytrain, kernel, verbose);
 
-% Test
+% Predict
 Xtest = X([testidx1; testidx2; testidx3], :); 
 Ytest = Y([testidx1; testidx2; testidx3]);
 
-[labelA,scoreA] = predict(SVMModelA,Xtest);
-[labelB,scoreB] = predict(SVMModelB,Xtest);
-[labelC,scoreC] = predict(SVMModelC,Xtest);
+predictLabel = Ytest;
+for i = 1:length(Ytest)
+    aux = predict(SVMModelC,Xtest(i,:));
+    if aux == 2
+        predictLabel(i) = predict(SVMModelA,Xtest(i,:));
+    else
+        predictLabel(i) = predict(SVMModelB,Xtest(i,:));
+    end
+    
+end
 
-predTest = [labelA labelB labelC];
-
-pred = mode(predTest,2);   %# voting: clasify as the class receiving most votes
-%# performance
-cmat = confusionmat(Ytest,pred);
+cmat = confusionmat(Ytest,predictLabel);
 acc = 100*sum(diag(cmat))./sum(cmat(:));
-fprintf('SVM (1-against-1):\naccuracy = %.2f%%\n', acc);
+fprintf('SVM (1-against-A):\naccuracy = %.2f%%\n', acc);
 fprintf('Confusion Matrix:\n'), disp(cmat)
-
