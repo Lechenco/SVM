@@ -1,18 +1,17 @@
 clear all;
 % load('test.mat');
 load _data/svmData;
-kernel = 'rbf';
+kernel = 'linear';
 data = svmData;
 characteristics = [1:10 17:20]; % Characteristics columns
 treshold = 1; pTrain = 0.8;
-slice = 6000;
+slice = 3000;
 
-class = separateClasses(annArray, "R*", "L*");
-
-svmData(class == 1, end) = 1;
-svmData(class == -1, end) = -1;
-svmData(class == 0,:) = [];
-paths(class == 0) = [];
+% class = separateClasses(annArray, "R*", "L*");
+% svmData(class == 1, end) = 1;
+% svmData(class == -1, end) = -1;
+% svmData(class == 0,:) = [];
+% paths(class == 0) = [];
 
 % Prepare Data
 [X, Y, idx] = prepareData(svmData, characteristics, slice);
@@ -34,5 +33,5 @@ printPredictResults(score, correct, treshold);
 printConfusionAndMetrics(label, Ypredict); 
 
 % plot Receiver Operating Characteristc
-% plotROC(Ypredict,score, -1)
+plotROC(Ypredict,score, -1)
  trackErrors(correctId, paths(~trainId));
