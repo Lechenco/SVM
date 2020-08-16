@@ -41,7 +41,7 @@ function [count] = saveArrithymWindows(...
     
     anomalyIndex = annotationData.ann(~isHealty(annotationData.anntype));
     anomalyIndex = anomalyIndex((anomalyIndex > windowSize & ...
-        anomalyIndex < length(sig) - windowSize));
+        anomalyIndex < length(sig) - windowSize)); % muito genérico, necessita pente fino
     disp("Number anomalies: " + int2str(size(anomalyIndex, 1)))
     
     for j = 1:size(anomalyIndex)

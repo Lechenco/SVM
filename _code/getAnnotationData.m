@@ -2,7 +2,7 @@ function [annotation] = getAnnotationData(path)
 %GETANNOTATIONDATA extract the informations
 % in a .atr file of the MIT ECG Databases.
 % 
-% DEPENDECIES: wfdb librarie
+% DEPENDECIES: wfdb library
 % 
 % [annotation] = getAnnotationData(path)
 % 
@@ -13,6 +13,7 @@ function [annotation] = getAnnotationData(path)
 %     annotation - struct with mainly informations
 %     of the extracted file.
     
+    disp(["Geting Annotations from " path]);
     [ann,anntype,subtype,chan,num,comments] = rdann(path, 'atr');
     
     delimiter = '/';
@@ -21,5 +22,9 @@ function [annotation] = getAnnotationData(path)
     annotation.numberAnn = size(ann, 1);
     annotation.ann = ann;
     annotation.anntype = anntype;
+    annotation.subtype = subtype;
+    annotation.chan = chan;
+    annotation.num = num;
+    annotation.comments = comments;
 end
 
