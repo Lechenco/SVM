@@ -17,8 +17,8 @@ function [annotation] = getAnnotationData(path)
     [ann,anntype,subtype,chan,num,comments] = rdann(path, 'atr');
     
     delimiter = '/';
-    aux = string(split(path, '/'));
-    annotation.fileName = strcat(aux(1), delimiter, aux(end));
+    aux = string(split(path, delimiter));
+    annotation.fileName = aux(end);
     annotation.numberAnn = size(ann, 1);
     annotation.ann = ann;
     annotation.anntype = anntype;
