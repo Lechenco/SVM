@@ -55,10 +55,11 @@ function [count] = saveNormalWindows(...
         signalWindow = signalWindow * 0.005; %Analogic Data to mV
         
         path = folder + annotationData.fileName;
+        label = "(N";
         if isempty(find(~isHealty(signalAnns), 1))
             count = count + 1;   
-            save(destination + "B" + int2str(count) + ".mat",...
-                'signalWindow', 'annType', 'signalAnns', 'path')
+            save(destination + "C" + int2str(count) + ".mat",...
+                'signalWindow', 'annType', 'signalAnns', 'path', 'label')
         end
     end
 end

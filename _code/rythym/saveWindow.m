@@ -11,7 +11,7 @@ function [] = saveWindow(filename, s, annotations, label, windowSize, center)
     % resample Data
     signalWindow = resample(signalWindow, 128, Fs);
     path = folder + annotations.fileName;           
-%     save(destination + filename...
-%         , 'signalWindow', 'annType', 'signalAnns', 'path', 'label')
+     save(destination + filename...
+         , 'signalWindow', 'annType', 'signalAnns', 'path', 'label')
 end
 

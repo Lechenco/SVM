@@ -1,4 +1,4 @@
-function [count] = findWindows( queries, annotations, windowSize)
+function [count] = findWindows( queries, annotations, windowSize, fileLetter, startWith)
 %FINDWINDOWS Summary of this function goes here
 %   Detailed explanation goes here
     global signalsPath;
@@ -29,9 +29,9 @@ function [count] = findWindows( queries, annotations, windowSize)
                 break;
             end
                 
-            filename = "A" + int2str(count) + ".mat";
+            filename = fileLetter + int2str(startWith + count) + ".mat";
             saveWindow(filename, s, annotations, ...
-                label, windowSize, sampleStart + windowSize);
+                label{1}, windowSize, sampleStart + windowSize);
             
             count = count + 1;
             sampleStart = sampleEnd + 1;
