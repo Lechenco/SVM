@@ -14,6 +14,10 @@ function [predictLabel] = predictOAAModels(modelsOAA, Xtest)
     predictLabel = zeros(length(Xtest), 1);
     for j = 1:length(predictLabel)
         predictLabel(j) = predictLabels(j, i(j));
+        
+        if predictLabel(j) ~= -1
+        disp(predictScore(j, i(j)))
+        end
     end
 end
 

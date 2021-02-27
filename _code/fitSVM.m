@@ -31,8 +31,22 @@ function [SVMModel] = fitSVM(Xtrain, Ytrain, kernel, verbose)
     if ~exist('kernel', 'var'); kernel = 'linear'; end
     if ~exist('verbose', 'var'); verbose = 0; end
     
+    classes = unique(Ytrain);
+    w = ones(size(Ytrain, 1), 1);
+    y1 = find(Ytrain == classes(1)); y2 = find(Ytrain == classes(2));
+    n1 = length(y1);
+    n2 = length(y2);
+    
+    w(y1) = 1 - n1 / (n1 + n2);
+    w(y2) = 1 - n2 / (n1 + n2);
+    
+    c = cvpartition(length(Ytrain),'KFold',10);
+    opts = struct('Optimizer','bayesopt','ShowPlots',false,'CVPartition',c,...
+    'AcquisitionFunctionName','expected-improvement-plus');
+    
     disp('Training SVM Model...')
     SVMModel = fitcsvm(Xtrain, Ytrain, 'KernelFunction', kernel, ...
-'KernelScale','auto', 'verbose', verbose, 'DeltaGradientTolerance', 1e-3);
+'OptimizeHyperparameters','all', 'HyperparameterOptimizationOptions',opts);
+
 end
 
